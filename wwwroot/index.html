@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>YugiWeb</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="js/typeahead/demo/bootstrap_3.2/jquery.typeahead.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <link href="css/Typeahead.css"/>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <app>Loading...</app>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="js/jQuery.js"></script>
+    <script src="js/typeahead/jquery.typeahead.js"></script>
+    <script src="js/Typeahead.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+
+        function obtenerValor() {
+            return $("#inputFiltro").val();
+        }
+
+        function typeahead(dotNetHelper) {
+
+            var substringMatcher = function (strs) {
+                return function findMatches(q, cb) {
+                    var matches, substringRegex;
+
+                    // an array that will be populated with substring matches
+                    matches = [];
+
+                    // regex used to determine if a string contains the substring `q`
+                    substrRegex = new RegExp(q, 'i');
+
+                    // iterate through the pool of strings and for any string that
+                    // contains the substring `q`, add it to the `matches` array
+                    $.each(strs, function (i, str) {
+                        if (substrRegex.test(str)) {
+                            matches.push(str);
+                        }
+                    });
+
+                    cb(matches);
+                };
+            };
+            $('#inputFiltro').typeahead({
+                highlight: true,
+                minLength: 3,
+                source: function (request, response) {
+                        console.log("Prueba");
+                        dotNetHelper.invokeMethodAsync('MostrarSugerencias').then((value)=>{
+                            var data = value;
+                            console.log(data);
+                            response(data)
+                            $(".dropdown-menu").css("height", "auto");
+                        })
+
+                },
+                updater: function (item) {
+                    //alert(map[item].id);
+                    return item;
+                }
+                });
+        }
+    </script>
+
+</body>
+
+</html>
